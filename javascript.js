@@ -1,11 +1,7 @@
 /* ==========
-  Version 1.1.0
+  Version 1.1
   Nav Replacer for Squarespace 7.1
   This Code is licensed by Will-Myers.com 
-  
-  Adding Feature to create Single Nav and Add to multiple pages
-  Updated the Site Title replacement to work better
-  Update to add in account Button into the Nav Items
 ========== */
 (function(){
   if (document.querySelectorAll('[data-wm-plugin="new-nav"]').length !== 0) {
@@ -256,7 +252,7 @@
 
       function newLogoLoader() {
         $siteTitleImg = $header.querySelectorAll('.header-title-logo source');
-        $mobileSiteTitleImg = $header.querySelectorAll('.header-mobile-logo src');
+        $mobileSiteTitleImg = $header.querySelectorAll('.header-mobile-logo source');
         $siteTitleImg.forEach(el => {
           el.srcset = desktopImgSrc;
         })
