@@ -37,8 +37,10 @@
         $socialDesktopEl = $header.querySelector('.header-actions-action--social'),
         $socialMobileEls = $header.querySelectorAll('[data-folder="root"] .header-menu-actions > *'),
         $navItemsDesktopEl = $header.querySelector('.header-nav-list'),
-        $navItemsMobileEl = $header.querySelector('.header-menu-nav-list');
-    
+        $navItemsMobileEl = $header.querySelector('.header-menu-nav-list'),
+        $socialsDesktopEl = $header.querySelector('.header-actions-action--social'),
+        $socialsMobileEl = $header.querySelector('.header-menu-actions');
+        
     //Remove Link Items
     function removeLinkItems() {
       $navItemsDesktopEl.querySelectorAll('.header-nav-item').forEach(e => {
@@ -146,7 +148,30 @@
       return [linkWrapper, mobileWrapper];
     }
 
-    let newNavLinks = settingsEl.querySelectorAll(':scope > div:not(.new-site-title):not(.new-cta):not(.new-mobile-title)');
+    let newSocialLinks = settingsEl.querySelectorAll(':scope > .social');
+    if (newSocialLinks.length) {
+      newSocialLinks.forEach(social => {
+        console.log(social.getAttribute('href'))
+        let href = social.getAttribute('href'),
+            url = new URL(href),
+            desktopSocial = $socialsDesktopEl.querySelector(`[href*="${url.host}"]`),
+            mobileSocial = $socialsMobileEl.querySelector(`[href*="${url.host}"]`);
+        if (desktopSocial) {
+          desktopSocial.href = social.getAttribute('href');
+          mobileSocial.href = social.getAttribute('href');
+          desktopSocial.classList.add('new-social');
+          mobileSocial.parentElement.classList.add('new-social');
+        } 
+      });
+      
+      //Remove Others
+      let otherSocials = $socialsDesktopEl.querySelectorAll('.icon:not(.new-social)'), 
+          otherMobileSocials = $socialsMobileEl.querySelectorAll('.header-menu-actions-action--social:not(.new-social)');
+      otherSocials.forEach(el => el.remove())
+      otherMobileSocials.forEach(el => el.remove())
+    }
+
+    let newNavLinks = settingsEl.querySelectorAll(':scope > div:not(.new-site-title):not(.new-cta):not(.new-mobile-title):not(.social)');
     if (newNavLinks.length !== 0) {
       removeLinkItems();
       newNavLinks.forEach(link => {
@@ -266,7 +291,7 @@
         $siteTitleImg.src = desktopImgSrc;
         $mobileSiteTitleImg.src = mobileImgSrc;
         
-        if ($header.querySelector('.header-display-desktop .header-title-logo source')) {
+        if ($header.querySelector('.header-title-logo source')) {
           newLogoLoader();
         }
         //window.addEventListener('load', setImage);
