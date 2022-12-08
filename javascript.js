@@ -151,7 +151,6 @@
     let newSocialLinks = settingsEl.querySelectorAll(':scope > .social');
     if (newSocialLinks.length) {
       newSocialLinks.forEach(social => {
-        console.log(social.getAttribute('href'))
         let href = social.getAttribute('href'),
             url = new URL(href),
             desktopSocial = $socialsDesktopEl.querySelector(`[href*="${url.host}"]`),
@@ -271,8 +270,8 @@
         $mobileSiteTitle.href = href;
       }
       if (href && $siteTitleImg){ 
-        $siteTitleImg.parentElement.href = href;
-        $mobileSiteTitleImg.parentElement.href = href;
+        $siteTitleImg.closest('a').href = href;
+        $mobileSiteTitleImg.closest('a').href = href;
       }
 
       function newLogoLoader() {
@@ -305,11 +304,9 @@
         let btns = document.querySelectorAll('[href="#sqsp-account"]'),
             accountBtn = document.querySelector('.user-accounts-text-link');
 
-        console.log(btns);
         function openAccountPanel(e){
           e.preventDefault();
           e.stopPropagation();
-          console.log('open');
           if (accountBtn) accountBtn.click();
         }
 
@@ -345,4 +342,4 @@
     style.appendChild(document.createTextNode(css));
     document.head.prepend(style);
   }
-}())
+}());
