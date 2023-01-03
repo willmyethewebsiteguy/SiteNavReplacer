@@ -49,8 +49,12 @@
         }
       });
       $navItemsMobileEl.querySelectorAll('[data-folder="root"] .header-menu-nav-item').forEach(e => {
-        if (e.querySelector('[href="/secondary-nav"]') == null) {
+        if (!e.classList.contains('user-accounts-link')){
           e.remove()
+        } else {
+          e.insertAdjacentHTML('beforebegin', `<style>
+            .header-menu-nav-folder-content .user-accounts-link{order: 1}
+          </style>`)
         }
       });
       $navItemsMobileEl.querySelectorAll('[data-folder]:not([data-folder="root"])').forEach(e => {
