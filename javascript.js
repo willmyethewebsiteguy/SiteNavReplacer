@@ -49,12 +49,14 @@
         }
       });
       $navItemsMobileEl.querySelectorAll('[data-folder="root"] .header-menu-nav-item').forEach(e => {
-        if (!e.classList.contains('user-accounts-link')){
-          e.remove()
-        } else {
-          e.insertAdjacentHTML('beforebegin', `<style>
-            .header-menu-nav-folder-content .user-accounts-link{order: 1}
-          </style>`)
+        if (e.querySelector('[href="/secondary-nav"]') == null) {
+          if (!e.classList.contains('user-accounts-link')){
+            e.remove()
+          } else {
+            e.insertAdjacentHTML('beforebegin', `<style>
+              .header-menu-nav-folder-content .user-accounts-link{order: 1}
+            </style>`)
+          }
         }
       });
       $navItemsMobileEl.querySelectorAll('[data-folder]:not([data-folder="root"])').forEach(e => {
@@ -71,6 +73,12 @@
           linkEl = document.createElement('a'),
           mobileWrapper = document.createElement('div'),
           mobileLink = document.createElement('a');
+      //console.log(text, newWindow);
+      if (newWindow) {
+        linkEl.target = '_blank';
+        mobileLink.target = '_blank'
+      }
+
       linkWrapper.append(linkEl);
       mobileWrapper.append(mobileLink);
       if (type === 'collection' || null) {
@@ -182,7 +190,7 @@
             href = link.getAttribute('href'),
             dropdown = !!link.classList.contains('new-nav-dropdown'),
             linkWrapper,
-            newWindow = link.hasAttribute('data-new-window');
+            newWindow = link.hasAttribute('data-new-window') || link.getAttribute('target') == '_blank';
         if (!dropdown) {
           linkWrapper = buildLink(text, href, 'collection', newWindow);
         } else if (dropdown) {
@@ -194,7 +202,7 @@
           link.querySelectorAll('div').forEach(subLink => {
             let subText = subLink.textContent,
                 subHref = subLink.getAttribute('href'),
-                subNewWindow = subLink.hasAttribute('data-new-window');
+                subNewWindow = subLink.hasAttribute('data-new-window') || subLink.getAttribute('target') == '_blank';
             let newFolderItem = buildLink(subText, subHref, 'dropdown-link', subNewWindow);
             folder.append(newFolderItem[0])
             let newMobileFolderItem = buildLink(subText, subHref, 'mobile-folder-item');
@@ -346,4 +354,4 @@
     style.appendChild(document.createTextNode(css));
     document.head.prepend(style);
   }
-}());
+}())
