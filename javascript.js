@@ -37,6 +37,7 @@
         $socialDesktopEl = $header.querySelector('.header-actions-action--social'),
         $socialMobileEls = $header.querySelectorAll('[data-folder="root"] .header-menu-actions > *'),
         $navItemsDesktopEl = $header.querySelector('.header-nav-list'),
+        $navItemsDesktopMobileEl = $header.querySelector('.header-display-mobile .header-nav-list'),
         $navItemsMobileEl = $header.querySelector('.header-menu-nav-list'),
         $socialsDesktopEl = $header.querySelector('.header-actions-action--social'),
         $socialsMobileEl = $header.querySelector('.header-menu-actions');
@@ -44,6 +45,11 @@
     //Remove Link Items
     function removeLinkItems() {
       $navItemsDesktopEl.querySelectorAll('.header-nav-item').forEach(e => {
+        if (e.querySelector('[href="/secondary-nav"]') == null) {
+          e.remove()
+        }
+      });
+      $navItemsDesktopMobileEl.querySelectorAll('.header-nav-item').forEach(e => {
         if (e.querySelector('[href="/secondary-nav"]') == null) {
           e.remove()
         }
@@ -210,6 +216,7 @@
           })
         }
         $navItemsDesktopEl.append(linkWrapper[0])
+        $navItemsDesktopMobileEl.append(linkWrapper[0].cloneNode(true))
         $navItemsMobileEl.querySelector('[data-folder="root"] .header-menu-nav-folder-content').append(linkWrapper[1])
       })
 
