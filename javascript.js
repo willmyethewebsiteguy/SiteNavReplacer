@@ -192,7 +192,7 @@
     if (newNavLinks.length !== 0) {
       removeLinkItems();
       newNavLinks.forEach(link => {
-        let text = link.innerHTML,
+        let text = link.textContent,
             href = link.getAttribute('href'),
             dropdown = !!link.classList.contains('new-nav-dropdown'),
             linkWrapper,
