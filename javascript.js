@@ -106,7 +106,12 @@
         linkWrapper.append(folderEl);
         linkWrapper.classList.add('header-nav-item--folder', 'header-nav-item');
         linkEl.classList.add('header-nav-folder-title');
-        linkEl.href = 'javascript:void(0)';
+        if (href) {
+          linkEl.href = href;
+        } else {
+          linkEl.href = 'javascript:void(0)';
+        }
+        
         linkEl.textContent = text;
         
         //Build Mobile Link
@@ -202,7 +207,10 @@
         } else if (dropdown) {
           let count = $navItemsMobileEl.querySelectorAll('[data-folder]').length;
           text = link.getAttribute('data-title');
-          href = 'wm-folder-' + count;
+          if (!href){
+            href = 'wm-folder-' + count;
+          }
+          
           linkWrapper = buildLink(text, href, 'dropdown', newWindow);
           let folder = linkWrapper[0].querySelector('.header-nav-folder-content');
           link.querySelectorAll('div').forEach(subLink => {
