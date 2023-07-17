@@ -298,7 +298,10 @@
       }
       if (href && $siteTitleImg){ 
         $siteTitleImg.closest('a').href = href;
-        $mobileSiteTitleImg.closest('a').href = href;
+        $mobileSiteTitleImg.closest('.header-title').querySelectorAll('a').forEach(el => {
+          el.href = href;
+        })
+
       }
 
       function newLogoLoader() {
