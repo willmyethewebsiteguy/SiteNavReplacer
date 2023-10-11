@@ -32,7 +32,7 @@
         $mobileSiteTitle = $header.querySelector('.header-display-mobile #site-title'),
         $siteTitleImg = $header.querySelector('.header-display-desktop .header-title img'),
         $mobileSiteTitleImg = $header.querySelector('.header-display-mobile .header-title img'),
-        $cta = $header.querySelector('.header-actions-action--cta .btn'),
+        $ctas = $header.querySelectorAll('.header-actions-action--cta .btn'),
         $mobileCta = $header.querySelector('[data-folder="root"] .header-menu-cta .btn'),
         $socialDesktopEl = $header.querySelector('.header-actions-action--social'),
         $socialMobileEls = $header.querySelectorAll('[data-folder="root"] .header-menu-actions > *'),
@@ -252,26 +252,30 @@
     let newCta = settingsEl.querySelector('.new-cta');
     if (newCta) {
       //Build CTA if Not Present
-      if (!$cta){
+      if (!$ctas.length){
         let $ctaContainer = document.createElement('div'),
             $mobileCTAContainer = document.createElement('div');
-        $cta = document.createElement('a');
+        let $cta = document.createElement('a');
         $mobileCta = document.createElement('a');
         $ctaContainer.classList.add('header-actions-action', 'header-actions-action--cta');
         $mobileCTAContainer.classList.add('header-menu-cta');
-        $cta.classList.add('btn', 'btn--border');
+        $cta.classList.add('btn', 'btn--border', 'sqs-button-element--primary');
         $mobileCta.classList.add('btn');
         $ctaContainer.append($cta);
         $mobileCTAContainer.append($mobileCta);
         let desktopActions = document.querySelector('.header-display-desktop .header-actions'),
             mobileActions = document.querySelector('[data-folder="root"]')
         desktopActions.append($ctaContainer)
+        document.querySelector('.header-display-mobile .header-actions').append($ctaContainer.cloneNode(true))
         mobileActions.append($mobileCTAContainer)
+        $ctas = $header.querySelectorAll('.header-actions-action--cta .btn')
       }
       let text = newCta.textContent,
           href = newCta.getAttribute('href');
-      $cta.textContent = text;
-      $cta.href = href;
+      $ctas.forEach(el => {
+        el.textContent = text
+        el.href = href;
+      });
       $mobileCta.textContent = text;
       $mobileCta.href = href;
     }
