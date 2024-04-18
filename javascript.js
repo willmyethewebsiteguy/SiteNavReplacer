@@ -276,11 +276,11 @@
       $ctas.forEach(el => {
         el.textContent = text
         el.href = href;
-        el.target = target;
+        if (target) el.target = target;
       });
       $mobileCta.textContent = text;
       $mobileCta.href = href;
-      $mobileCta.target = target;
+      if (target) $mobileCta.target = target;
     }
 
 
