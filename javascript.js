@@ -271,13 +271,16 @@
         $ctas = $header.querySelectorAll('.header-actions-action--cta .btn')
       }
       let text = newCta.textContent,
-          href = newCta.getAttribute('href');
+          href = newCta.getAttribute('href'),
+          target = newCta.getAttribute('target');
       $ctas.forEach(el => {
         el.textContent = text
         el.href = href;
+        el.target = target;
       });
       $mobileCta.textContent = text;
       $mobileCta.href = href;
+      $mobileCta.target = target;
     }
 
 
