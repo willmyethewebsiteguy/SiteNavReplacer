@@ -467,19 +467,34 @@
         '.header-menu-nav-list .header-menu-nav-item'
       );
 
-    newLinks.forEach(link => {
-      let href =
-        link.querySelector("a:not(.header-nav-folder-title)") ||
-        link.querySelector("a");
-      if (pathName == href.getAttribute("href")) {
-        link.classList.add(activeClass);
-      }
+    newLinks.forEach(linkContainer => {
+      const links = linkContainer.querySelectorAll("a");
+      links.forEach(link => {
+        if (pathName === link.getAttribute("href")) {
+          linkContainer.classList.add('header-nav-item--active');
+          if (link.parentElement.classList.contains("header-nav-folder-item")) {
+            link.parentElement.classList.add('header-nav-folder-item--active')
+            const span = document.createElement('span');
+            span.classList.add('header-nav-folder-item-content');
+            span.textContent = link.textContent; // Use textContent instead of innerText
+            
+            // Clear and append
+            link.textContent = ''; // Use textContent instead of innerHTML for better safety
+            link.appendChild(span);
+            
+            link.classList.add(activeClass);
+            link.setAttribute("aria-current", "page");
+          }
+        }
+      });
     });
 
     newMobileLinks.forEach(link => {
       let href = link.querySelector("a");
-      if (pathName == href.getAttribute("href")) {
+      if (pathName === href.getAttribute("href")) {
         // Store the text content before manipulating the DOM
+        
+        //Active Link
         const linkText = href.textContent.trim();
         
         const div = document.createElement('div');
@@ -492,6 +507,25 @@
         
         link.classList.add(activeMobileClass);
         href.setAttribute("aria-current", "page");
+
+
+        //If Folder Trigger is Present, Add Active Class
+        const folderId = href.closest('[data-folder]').getAttribute('data-folder');
+        const folderTrigger = document.querySelector(`[data-folder="root"] a[href="${folderId}"]`);
+
+        if (folderTrigger) {
+          folderTrigger.setAttribute('aria-current', 'true');
+          folderTrigger.parentElement.classList.add('header-menu-nav-item--active');
+
+          const span = document.createElement('span');
+          span.classList.add('header-menu-nav-item-content');
+          span.innerHTML = folderTrigger.innerHTML; // Use textContent instead of innerText
+          
+          // Clear and append
+          folderTrigger.innerHTML = ''; // Use textContent instead of innerHTML for better safety
+          folderTrigger.appendChild(span);
+        }
+
       }
     });
 
