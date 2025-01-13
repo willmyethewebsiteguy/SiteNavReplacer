@@ -63,6 +63,77 @@
       ),
       $socialsMobileEl = $header.querySelector(".header-menu-actions");
 
+    // New Announcement Bar
+    const newAnnouncementBar = settingsEl.querySelector(
+      ".new-announcement-bar"
+    );
+    if (newAnnouncementBar) {
+      const newAnnouncementHTML = newAnnouncementBar.innerHTML;
+      
+      // Store original values before making changes
+      const originalSettings = {
+        showBar: Static.SQUARESPACE_CONTEXT.showAnnouncementBar,
+        abSettings: Static.SQUARESPACE_CONTEXT.websiteSettings?.announcementBarSettings,
+        // barText: Static.SQUARESPACE_CONTEXT.websiteSettings?.announcementBarSettings?.text,
+        // clickthroughUrl: Static.SQUARESPACE_CONTEXT.websiteSettings?.announcementBarSettings?.clickthroughUrl,
+        localStorage: localStorage.getItem('squarespace-announcement-bar')
+      };
+
+      // Enable announcement bar and update text
+      Static.SQUARESPACE_CONTEXT.showAnnouncementBar = true;
+      let announcementBarData = JSON.parse(localStorage.getItem('squarespace-announcement-bar')) || {};
+      announcementBarData.text = newAnnouncementHTML;
+      announcementBarData.closed = false;
+      announcementBarData.clickthroughUrl = null;
+      Static.SQUARESPACE_CONTEXT.websiteSettings.announcementBarSettings.clickthroughUrl = null;
+
+      if (newAnnouncementBar.getAttribute("href")) {
+        let clickthroughUrl = {};
+        clickthroughUrl.url = newAnnouncementBar.getAttribute("href");
+        clickthroughUrl.newWindow = newAnnouncementBar.getAttribute("target") == "_blank";
+        announcementBarData.clickthroughUrl = clickthroughUrl;
+
+        console.log(clickthroughUrl);
+        
+        if (Static.SQUARESPACE_CONTEXT.websiteSettings?.announcementBarSettings) {
+          Static.SQUARESPACE_CONTEXT.websiteSettings.announcementBarSettings.clickthroughUrl = clickthroughUrl;
+        }
+      }
+
+      localStorage.setItem('squarespace-announcement-bar', JSON.stringify(announcementBarData));
+    
+      if (Static.SQUARESPACE_CONTEXT.websiteSettings?.announcementBarSettings?.text) {
+        Static.SQUARESPACE_CONTEXT.websiteSettings.announcementBarSettings.text = newAnnouncementHTML;
+      }
+
+      // Add styles to hide close button
+      const styles = document.createElement("style");
+      styles.textContent = `
+        .new-nav-loaded .sqs-announcement-bar-close {
+          display: none;
+        }
+      `;
+      document.head.appendChild(styles);
+
+      // Revert changes after document loads
+      window.addEventListener('load', () => {
+        Static.SQUARESPACE_CONTEXT.showAnnouncementBar = originalSettings.showBar;
+        if (Static.SQUARESPACE_CONTEXT.websiteSettings?.announcementBarSettings) {
+          Static.SQUARESPACE_CONTEXT.websiteSettings.announcementBarSettings = originalSettings.abSettings;
+        }
+        
+        if (originalSettings.localStorage) {
+          localStorage.setItem('squarespace-announcement-bar', originalSettings.localStorage);
+        } else {
+          localStorage.removeItem('squarespace-announcement-bar');
+        }
+
+        // if (Static.SQUARESPACE_CONTEXT.websiteSettings?.announcementBarSettings?.text) {
+        //   Static.SQUARESPACE_CONTEXT.websiteSettings.announcementBarSettings.text = originalSettings.barText;
+        // }
+      });
+    }
+
     //Remove Link Items
     function removeLinkItems() {
       $navItemsDesktopEl.querySelectorAll(".header-nav-item").forEach(e => {
@@ -246,7 +317,7 @@
     }
 
     let newNavLinks = settingsEl.querySelectorAll(
-      ":scope > div:not(.new-site-title):not(.new-cta):not(.new-mobile-title):not(.social)"
+      ":scope > div:not(.new-site-title):not(.new-cta):not(.new-mobile-title):not(.social):not(.new-announcement-bar)"
     );
     if (newNavLinks.length !== 0) {
       removeLinkItems();
@@ -464,24 +535,24 @@
       pathName = window.location.pathname,
       newLinks = document.querySelectorAll(".header-nav-list .header-nav-item"),
       newMobileLinks = document.querySelectorAll(
-        '.header-menu-nav-list .header-menu-nav-item'
+        ".header-menu-nav-list .header-menu-nav-item"
       );
 
     newLinks.forEach(linkContainer => {
       const links = linkContainer.querySelectorAll("a");
       links.forEach(link => {
         if (pathName === link.getAttribute("href")) {
-          linkContainer.classList.add('header-nav-item--active');
+          linkContainer.classList.add("header-nav-item--active");
           if (link.parentElement.classList.contains("header-nav-folder-item")) {
-            link.parentElement.classList.add('header-nav-folder-item--active')
-            const span = document.createElement('span');
-            span.classList.add('header-nav-folder-item-content');
+            link.parentElement.classList.add("header-nav-folder-item--active");
+            const span = document.createElement("span");
+            span.classList.add("header-nav-folder-item-content");
             span.textContent = link.textContent; // Use textContent instead of innerText
-            
+
             // Clear and append
-            link.textContent = ''; // Use textContent instead of innerHTML for better safety
+            link.textContent = ""; // Use textContent instead of innerHTML for better safety
             link.appendChild(span);
-            
+
             link.classList.add(activeClass);
             link.setAttribute("aria-current", "page");
           }
@@ -493,39 +564,43 @@
       let href = link.querySelector("a");
       if (pathName === href.getAttribute("href")) {
         // Store the text content before manipulating the DOM
-        
+
         //Active Link
         const linkText = href.textContent.trim();
-        
-        const div = document.createElement('div');
-        div.classList.add('header-menu-nav-item-content');
+
+        const div = document.createElement("div");
+        div.classList.add("header-menu-nav-item-content");
         div.textContent = linkText; // Use textContent instead of innerText
-        
+
         // Clear and append
-        href.textContent = ''; // Use textContent instead of innerHTML for better safety
+        href.textContent = ""; // Use textContent instead of innerHTML for better safety
         href.appendChild(div);
-        
+
         link.classList.add(activeMobileClass);
         href.setAttribute("aria-current", "page");
 
-
         //If Folder Trigger is Present, Add Active Class
-        const folderId = href.closest('[data-folder]').getAttribute('data-folder');
-        const folderTrigger = document.querySelector(`[data-folder="root"] a[href="${folderId}"]`);
+        const folderId = href
+          .closest("[data-folder]")
+          .getAttribute("data-folder");
+        const folderTrigger = document.querySelector(
+          `[data-folder="root"] a[href="${folderId}"]`
+        );
 
         if (folderTrigger) {
-          folderTrigger.setAttribute('aria-current', 'true');
-          folderTrigger.parentElement.classList.add('header-menu-nav-item--active');
+          folderTrigger.setAttribute("aria-current", "true");
+          folderTrigger.parentElement.classList.add(
+            "header-menu-nav-item--active"
+          );
 
-          const span = document.createElement('span');
-          span.classList.add('header-menu-nav-item-content');
+          const span = document.createElement("span");
+          span.classList.add("header-menu-nav-item-content");
           span.innerHTML = folderTrigger.innerHTML; // Use textContent instead of innerText
-          
+
           // Clear and append
-          folderTrigger.innerHTML = ''; // Use textContent instead of innerHTML for better safety
+          folderTrigger.innerHTML = ""; // Use textContent instead of innerHTML for better safety
           folderTrigger.appendChild(span);
         }
-
       }
     });
 
