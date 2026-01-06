@@ -1,19 +1,45 @@
 /* ==========
-  Version 1.1
+  Version 1.2
   Nav Replacer for Squarespace 7.1
   This Code is licensed by Will-Myers.com 
 ========== */
 (function () {
-  if (document.querySelectorAll('[data-wm-plugin="new-nav"]').length !== 0) {
-    let el = document.querySelector('[data-wm-plugin="new-nav"]'),
-      settingsEl;
-    if (el.hasAttribute("data-nav-id")) {
-      let id = el.getAttribute("data-nav-id");
-      settingsEl = document.querySelector(
-        `[data-nav-id="${id}"]:not([data-wm-plugin="new-nav"])`
-      );
+  // Track if already initialized to prevent duplicate runs
+  let isInitialized = false;
+
+  function initNavReplacer(options = {}) {
+    // Prevent duplicate initialization unless force is true
+    if (isInitialized && !options.force) {
+      console.warn('Nav Replacer: Already initialized. Pass { force: true } to reinitialize.');
+      return false;
+    }
+
+    let el, settingsEl;
+
+    // If navId is passed in options, use it directly to find the settings element
+    if (options.navId) {
+      settingsEl = document.querySelector(`[data-nav-id="${options.navId}"]`);
+      if (!settingsEl) {
+        console.warn(`Nav Replacer: No element found with [data-nav-id="${options.navId}"]`);
+        return false;
+      }
+      el = settingsEl;
     } else {
-      settingsEl = el;
+      // Fall back to original data-attribute behavior
+      if (document.querySelectorAll('[data-wm-plugin="new-nav"]').length === 0) {
+        console.warn('Nav Replacer: No element found with [data-wm-plugin="new-nav"]');
+        return false;
+      }
+
+      el = document.querySelector('[data-wm-plugin="new-nav"]');
+      if (el.hasAttribute("data-nav-id")) {
+        let id = el.getAttribute("data-nav-id");
+        settingsEl = document.querySelector(
+          `[data-nav-id="${id}"]:not([data-wm-plugin="new-nav"])`
+        );
+      } else {
+        settingsEl = el;
+      }
     }
 
     //Hide Code Block
@@ -618,5 +644,19 @@
     style.setAttribute("type", "text/css");
     style.appendChild(document.createTextNode(css));
     document.head.prepend(style);
+
+    // Mark as initialized
+    isInitialized = true;
+    
+    return true;
   }
+
+  // Expose the init function globally
+  window.wmNavReplacer = {
+    init: initNavReplacer,
+    isInitialized: () => isInitialized
+  };
+
+  // Auto-initialize on load (preserves original behavior)
+  initNavReplacer();
 })();
